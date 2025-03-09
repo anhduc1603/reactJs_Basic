@@ -1,0 +1,44 @@
+.App {
+    display: flex; /* Sử dụng Flexbox để bố trí các phần tử con */
+    flex-direction: column; /* Xếp các phần tử con theo chiều dọc */
+    width: 100vw; /* Chiều rộng chiếm toàn bộ viewport */
+    height: 100vh; /* Chiều cao chiếm toàn bộ viewport */
+}
+
+.AppHeader {
+    height: 50px;
+    display: flex;
+    justify-content: space-between; /* Cách đều hai đầu (trái và phải) */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    padding: 4px 20px 4px 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.AppFooter {
+    height: 50px;
+    display: flex;
+    justify-content: flex-end; /* Dồn các phần tử về bên phải */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    gap: 15px; /* Khoảng cách giữa các phần tử là 15px */
+    border-top: 2px solid rgba(0, 0, 0, 0.15);
+    padding-right: 10px; /* Thêm khoảng cách 10px giữa phần tử cuối và lề phải */
+}
+
+
+.SideMenuAndPageContent {
+    display: flex;
+    flex: 1; /* Chiếm toàn bộ không gian còn lại của trang */
+    justify-content: flex-start; /* Các phần tử sẽ dồn về bên trái */
+    align-items: flex-start; /* Căn phần tử con lên phía trên */
+    background-color: rgba(0, 0, 0, 0.05); /* Màu nền xám nhẹ */
+}
+
+.SideMenu{
+    height: 100%;/* chiếm toàn bộ chiều cao của .SideMenuAndPageContent.*/
+}
+.SideMenuVertical{
+    height: 100%;
+}
+.PageContent{
+    padding-left: 12px; /* Tạo khoảng cách bên trái giữa nội dung và sidebar.*/
+}
