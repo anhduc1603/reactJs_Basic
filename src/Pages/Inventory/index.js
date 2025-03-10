@@ -1,6 +1,6 @@
-import { Avatar, Rate, Space, Table, Typography } from "antd";
-import { useEffect, useState } from "react";
-import { getInventory } from "../../API";
+import {Avatar, Rate, Space, Table, Typography} from "antd";
+import {useEffect, useState} from "react";
+import {getInventory} from "../../API";
 
 function Inventory() {
   const [loading, setLoading] = useState(false);

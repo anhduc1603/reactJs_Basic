@@ -1,7 +1,7 @@
-import { BellFilled, MailOutlined, ShoppingCartOutlined } from "@ant-design/icons";
-import { Badge, Drawer, Image, List, Space, Typography } from "antd";
-import { useEffect, useState } from "react";
-import { getComments, getOrders } from "../../API";
+import {BellFilled, MailOutlined, ShoppingCartOutlined} from "@ant-design/icons";
+import {Badge, Drawer, Image, List, Space, Typography} from "antd";
+import {useEffect, useState} from "react";
+import {getComments, getOrders} from "../../API";
 
 function AppHeader() {
   const [comments, setComments] = useState([]);

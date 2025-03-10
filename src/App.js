@@ -3,7 +3,8 @@ import AppFooter from "./Components/AppFooter";
 import AppHeader from "./Components/AppHeader";
 import PageContent from "./Components/PageContent";
 import SideMenu from "./Components/SideMenu";
-import LoginWithGoogle from "./Components/Login/Login";
+import Search from "../src/Pages/Search";
+import HistoryRequest from "../src/Pages/HistoryRequest";
 
 function App() {
   return (
@@ -15,7 +16,8 @@ function App() {
       </div>
       <AppFooter />
     </div>
-    //   <LoginWithGoogle/>
+    //   <HistoryRequest/>
+      // <Search/>
 
   );
 }

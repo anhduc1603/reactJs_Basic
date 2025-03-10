@@ -1,6 +1,5 @@
 import React from "react";
 
-const clientId = "170170392072-sa58g53ntplofuf13qimbvmbfarsecbp.apps.googleusercontent.com"; // Thay bằng Client ID của bạn
 
 const LoginWithGoogle = () => {
 

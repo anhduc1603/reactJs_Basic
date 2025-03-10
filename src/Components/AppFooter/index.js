@@ -1,4 +1,4 @@
-import { Typography } from "antd";
+import {Typography} from "antd";
 
 function AppFooter() {
   return (
