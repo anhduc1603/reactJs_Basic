@@ -1,63 +1,66 @@
-import {
-  AppstoreOutlined,
-  ShopOutlined,
-  ShoppingCartOutlined,
-  UserOutlined,
-  SearchOutlined
-} from "@ant-design/icons";
+import { AppstoreOutlined, SearchOutlined, FileSearchOutlined, UserOutlined, SettingOutlined } from "@ant-design/icons";
 import { Menu } from "antd";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../Login/AuthContext"; // Lấy user từ context
 
 function SideMenu() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [selectedKeys, setSelectedKeys] = useState("/");
 
+  // Lấy thông tin user
+  const { user } = useAuth();
+
   useEffect(() => {
-    const pathName = location.pathname;
-    setSelectedKeys(pathName);
+    setSelectedKeys(location.pathname);
   }, [location.pathname]);
 
-  const navigate = useNavigate();
+  // Danh sách menu cơ bản cho tất cả user
+  const menuItems = [
+    {
+      label: "Dashboard",
+      icon: <AppstoreOutlined />,
+      key: "/",
+    },
+    {
+      label: "Search",
+      key: "/search",
+      icon: <SearchOutlined />,
+    },
+    {
+      label: "History Request",
+      key: "/history-request",
+      icon: <FileSearchOutlined />,
+    },
+  ];
+
+  // Nếu user có role "admin", thêm menu đặc biệt
+  if (user?.role === "admin") {
+    menuItems.push(
+        {
+          label: "User Management",
+          key: "/users",
+          icon: <UserOutlined />,
+        },
+        {
+          label: "Admin Settings",
+          key: "/admin-settings",
+          icon: <SettingOutlined />,
+        }
+    );
+  }
+
   return (
-    <div className="SideMenu">
-      <Menu
-        className="SideMenuVertical"
-        mode="vertical"
-        onClick={(item) => {
-          //item.key
-          navigate(item.key);
-        }}
-        selectedKeys={[selectedKeys]}
-        items={[
-          {
-            label: "Dashboard",
-            icon: <AppstoreOutlined />,
-            key: "/",
-          },
-          {
-            label: "Inventory",
-            key: "/inventory",
-            icon: <ShopOutlined />,
-          },
-          {
-            label: "Orders",
-            key: "/orders",
-            icon: <ShoppingCartOutlined />,
-          },
-          {
-            label: "Customers",
-            key: "/customers",
-            icon: <UserOutlined />,
-          },
-          {
-            label: "Search",
-            key: "/search",
-            icon: <SearchOutlined />,
-          }
-        ]}
-      ></Menu>
-    </div>
+      <div className="SideMenu">
+        <Menu
+            mode="vertical"
+            onClick={(item) => navigate(item.key)}
+            selectedKeys={[selectedKeys]}
+            items={menuItems}
+        />
+      </div>
   );
 }
+
 export default SideMenu;

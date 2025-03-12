@@ -1,23 +1,10 @@
-import {
-  DollarCircleOutlined,
-  ShoppingCartOutlined,
-  ShoppingOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
-import { Card, Space, Statistic, Table, Typography } from "antd";
-import { useEffect, useState } from "react";
-import { getCustomers, getInventory, getOrders, getRevenue } from "../../API";
+import {DollarCircleOutlined, ShoppingCartOutlined, ShoppingOutlined, UserOutlined,} from "@ant-design/icons";
+import {Card, Space, Statistic, Table, Typography} from "antd";
+import {useEffect, useState} from "react";
+import {getCustomers, getInventory, getOrders, getRevenue} from "../../API";
 
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import { Bar } from "react-chartjs-2";
+import {BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip,} from "chart.js";
+import {Bar} from "react-chartjs-2";
 
 ChartJS.register(
   CategoryScale,

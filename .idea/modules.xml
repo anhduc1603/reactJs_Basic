@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/Dashbaord-Tutorial-using-React-and-Ant-Design.iml" filepath="$PROJECT_DIR$/.idea/Dashbaord-Tutorial-using-React-and-Ant-Design.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/reactJs_Basic.iml" filepath="$PROJECT_DIR$/.idea/reactJs_Basic.iml" />
     </modules>
   </component>
 </project>
