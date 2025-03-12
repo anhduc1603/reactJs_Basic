@@ -5,6 +5,7 @@ import {getCustomers, getInventory, getOrders, getRevenue} from "../../API";
 
 import {BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip,} from "chart.js";
 import {Bar} from "react-chartjs-2";
+import 'bootstrap/dist/css/bootstrap.css';
 
 ChartJS.register(
   CategoryScale,

@@ -1,4 +1,5 @@
 import { useState, useEffect, createContext, useContext } from "react";
+import {jwtDecode} from "jwt-decode";
 
 const AuthContext = createContext();
 
@@ -43,3 +44,17 @@ export function AuthProvider({ children }) {
 export function useAuth() {
     return useContext(AuthContext);
 }
+
+
+export const getUserRole = () => {
+    const token = localStorage.getItem("user"); // Lấy token từ localStorage
+    if (!token) return null; // Nếu không có token, trả về null
+
+    try {
+        const decoded = jwtDecode(token); // Giải mã token
+        return decoded.role; // Giả sử role được lưu trong token
+    } catch (error) {
+        console.error("Invalid token", error);
+        return null;
+    }
+};

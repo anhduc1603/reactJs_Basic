@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { useAuth } from "../Login/AuthContext";
+import { useAuth } from "./AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Container, Form, Button, Card } from "react-bootstrap";
+import 'bootstrap/dist/css/bootstrap.css';
 
 const Login = () => {
     const [username, setUsername] = useState("");
@@ -21,7 +22,8 @@ const Login = () => {
                 <h3 className="text-center">Login</h3>
                 <Form onSubmit={handleSubmit}>
                     <Form.Group className="mb-3">
-                        <Form.Label>Username</Form.Label>
+
+                        <Form.Label >Username</Form.Label>
                         <Form.Control
                             type="text"
                             value={username}
@@ -30,7 +32,7 @@ const Login = () => {
                         />
                     </Form.Group>
                     <Form.Group className="mb-3">
-                        <Form.Label>Password</Form.Label>
+                        <Form.Label htmlFor="inputPassword5">Password</Form.Label>
                         <Form.Control
                             type="password"
                             value={password}

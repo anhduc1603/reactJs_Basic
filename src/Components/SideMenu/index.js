@@ -2,7 +2,8 @@ import { AppstoreOutlined, SearchOutlined, FileSearchOutlined, UserOutlined, Set
 import { Menu } from "antd";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../Login/AuthContext"; // Lấy user từ context
+import {getUserRole, useAuth} from "../Login/AuthContext"; // Lấy user từ context
+import 'bootstrap/dist/css/bootstrap.css';
 
 function SideMenu() {
   const location = useLocation();
@@ -11,6 +12,10 @@ function SideMenu() {
 
   // Lấy thông tin user
   const { user } = useAuth();
+
+  //Lấy role
+  const role = getUserRole();
+
 
   useEffect(() => {
     setSelectedKeys(location.pathname);
@@ -36,7 +41,7 @@ function SideMenu() {
   ];
 
   // Nếu user có role "admin", thêm menu đặc biệt
-  if (user?.role === "admin") {
+  if (role === "admin") {
     menuItems.push(
         {
           label: "User Management",
