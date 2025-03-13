@@ -10,8 +10,6 @@ function SideMenu() {
   const navigate = useNavigate();
   const [selectedKeys, setSelectedKeys] = useState("/");
 
-  // Lấy thông tin user
-  const { user } = useAuth();
 
   //Lấy role
   const role = getUserRole();

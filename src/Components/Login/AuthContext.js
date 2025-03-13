@@ -1,5 +1,7 @@
 import { useState, useEffect, createContext, useContext } from "react";
 import {jwtDecode} from "jwt-decode";
+import {API_LOGIN, API_URL} from "../../constants";
+import {useNavigate} from "react-router-dom";
 
 const AuthContext = createContext();
 
@@ -14,7 +16,7 @@ export function AuthProvider({ children }) {
     }, []);
 
     const login = async (username, password) => {
-        const response = await fetch("http://localhost:8080/login", {
+        const response = await fetch(API_URL+API_LOGIN, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password }),
@@ -34,6 +36,7 @@ export function AuthProvider({ children }) {
         setUser(null);
     };
 
+
     return (
         <AuthContext.Provider value={{ user, login, logout }}>
             {children}
@@ -44,6 +47,7 @@ export function AuthProvider({ children }) {
 export function useAuth() {
     return useContext(AuthContext);
 }
+
 
 
 export const getUserRole = () => {

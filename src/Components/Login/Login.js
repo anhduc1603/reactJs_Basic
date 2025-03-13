@@ -3,6 +3,8 @@ import { useAuth } from "./AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Container, Form, Button, Card } from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.css';
+import { Col, Row } from "react-bootstrap"; // Đổi từ antd sang bootstrap
+import { FaGoogle, FaFacebook } from "react-icons/fa";
 
 const Login = () => {
     const [username, setUsername] = useState("");
@@ -16,14 +18,25 @@ const Login = () => {
         navigate("/dashboard");
     };
 
+    const handleGoogleLogin = async (e) => {
+        e.preventDefault();
+        await login(username, password);
+        navigate("/dashboard");
+    };
+
+    const handleFacebookLogin = async (e) => {
+        e.preventDefault();
+        await login(username, password);
+        navigate("/dashboard");
+    };
+
     return (
         <Container className="d-flex justify-content-center align-items-center vh-100">
             <Card style={{ width: "400px", padding: "20px" }}>
                 <h3 className="text-center">Login</h3>
                 <Form onSubmit={handleSubmit}>
                     <Form.Group className="mb-3">
-
-                        <Form.Label >Username</Form.Label>
+                        <Form.Label>Username</Form.Label>
                         <Form.Control
                             type="text"
                             value={username}
@@ -32,7 +45,7 @@ const Login = () => {
                         />
                     </Form.Group>
                     <Form.Group className="mb-3">
-                        <Form.Label htmlFor="inputPassword5">Password</Form.Label>
+                        <Form.Label>Password</Form.Label>
                         <Form.Control
                             type="password"
                             value={password}
@@ -44,9 +57,40 @@ const Login = () => {
                         Login
                     </Button>
                 </Form>
+                <hr />
+                <Row>
+                    <Col>
+                        <Button
+                            variant="outline-danger"
+                            className="w-100 d-flex align-items-center justify-content-center mb-2"
+                            onClick={handleGoogleLogin}
+                        >
+                            <FaGoogle className="me-2" /> Login with Google
+                        </Button>
+                    </Col>
+                    <Col>
+                        <Button
+                            variant="outline-primary"
+                            className="w-100 d-flex align-items-center justify-content-center"
+                            onClick={handleFacebookLogin}
+                        >
+                            <FaFacebook className="me-2" /> Login with Facebook
+                        </Button>
+                    </Col>
+                </Row>
+                <hr />
+                <div className="text-center">
+                    <span>Don't have an account?</span>
+                    <Button
+                        variant="link"
+                        className="p-0 ms-2"
+                        onClick={() => navigate("/register")}
+                    >
+                        Create Account
+                    </Button>
+                </div>
             </Card>
         </Container>
-
     );
 };
 

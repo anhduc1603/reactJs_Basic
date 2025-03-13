@@ -5,6 +5,7 @@ import Inventory from "../../Pages/Inventory";
 import Orders from "../../Pages/Orders";
 import Search from "../../Pages/Search";
 import HistoryRequest from "../../Pages/HistoryRequest";
+import Register from "../Register/Register";
 
 function AppRoutes() {
   return (
@@ -15,6 +16,7 @@ function AppRoutes() {
       <Route path="/customers" element={<Customers />}></Route>
       <Route path="/search" element={<Search />}></Route>
       <Route path="/history-request" element={<HistoryRequest />}></Route>
+      <Route path="/register" element={<Register />}></Route>
     </Routes>
   );
 }

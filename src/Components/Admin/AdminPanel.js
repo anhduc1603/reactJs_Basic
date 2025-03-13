@@ -3,9 +3,9 @@ import { useState } from "react";
 function AdminPanel() {
     return
     (
-        <di>
-            Page panel
-        </di>
+        <div>
+            <h1>xin chào admin panel</h1>
+        </div>
     );
 }
 
