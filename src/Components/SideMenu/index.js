@@ -10,12 +10,8 @@ function SideMenu() {
   const navigate = useNavigate();
   const [selectedKeys, setSelectedKeys] = useState("/");
 
-  // Lấy thông tin user
-  const { user } = useAuth();
-
   //Lấy role
   const role = getUserRole();
-
 
   useEffect(() => {
     setSelectedKeys(location.pathname);
@@ -44,27 +40,26 @@ function SideMenu() {
   if (role === "admin") {
     menuItems.push(
         {
-          label: "User Management",
-          key: "/users",
+          label: "Quản trị",
+          key: "/manager-admin",
           icon: <UserOutlined />,
-        },
-        {
-          label: "Admin Settings",
-          key: "/admin-settings",
-          icon: <SettingOutlined />,
         }
     );
   }
 
   return (
-      <div className="SideMenu">
-        <Menu
-            mode="vertical"
-            onClick={(item) => navigate(item.key)}
-            selectedKeys={[selectedKeys]}
-            items={menuItems}
-        />
-      </div>
+    <>
+      {role && (
+          <div className="SideMenu">
+            <Menu
+                mode="vertical"
+                onClick={(item) => navigate(item.key)}
+                selectedKeys={[selectedKeys]}
+                items={menuItems}
+            />
+          </div>
+      )}
+    </>
   );
 }
 

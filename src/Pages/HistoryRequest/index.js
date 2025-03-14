@@ -1,111 +1,131 @@
 import React, { useState } from "react";
-import { Button, Form, Input, Table, Alert, Checkbox, Card, Space, message,Modal } from "antd";
+import {
+    Button, Form, Table, Alert, Card, Modal, Badge, Spinner, InputGroup, FormControl, OverlayTrigger
+} from "react-bootstrap";
+import { API_GET_LIST_ITEMS, API_URL } from "../../constants";
+import Tooltip from 'react-bootstrap/Tooltip';
 
 function HistoryRequest() {
     const [query, setQuery] = useState("");
     const [results, setResults] = useState([]);
     const [error, setError] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
+        setLoading(true);
 
         try {
-            const response = await fetch(`http://localhost:8080/v1/items`);
+            const response = await fetch(API_URL + API_GET_LIST_ITEMS);
             if (!response.ok) throw new Error("Lỗi khi gọi API");
 
             const result = await response.json();
             setResults(result.data || []);
         } catch (err) {
             setError(err.message);
+        } finally {
+            setLoading(false);
         }
     };
 
     const handleDelete = (id) => {
         setResults(results.filter((item) => item.id !== id));
-        message.success("Xóa thành công!");
+        setTimeout(() => alert("Xóa thành công!"), 500);
     };
 
-    const confirm = () =>
-        new Promise((resolve) => {
-            setTimeout(() => resolve(null), 3000);
-        });
     const handleShowRequest = () => {
         setIsModalOpen(true);
     };
 
-
-    const columns = [
-        { title: "#", dataIndex: "index", key: "index", render: (_, __, index) => index + 1 },
-        { title: <Checkbox />, dataIndex: "checkbox", key: "checkbox", render: () => <Checkbox /> },
-        { title: "SDT/Mail/TKCK", dataIndex: "info", key: "info" },
-        { title: "Status", dataIndex: "status", key: "status" },
-        {
-            title: "Content",
-            dataIndex: "content",
-            key: "content",
-            render: (text) => (
-                <Space>
-                    {"****"} {/* Hiển thị nội dung bị ẩn */}
-                </Space>
-            ),
-        },
-        {
-            title: "Hành động",
-            key: "actions",
-            render: (_, item) => (
-                <Space>
-                    <Button type="primary" size="small" onClick={() => handleShowRequest(item)}>🔍 Hiển thị</Button>
-                    <Button type="danger" size="small" onClick={() => handleDelete(item.id)}>🗑 Xóa</Button>
-                </Space>
-            ),
-        },
-    ];
+    const renderTooltip = (message) => (
+        <Tooltip  id="tooltip-disabled">{message}</Tooltip>
+    );
 
     return (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh", paddingTop: 30 }}>
+        <div className="container mt-4">
             {/* Form tìm kiếm */}
-            <Card style={{ width: 400, boxShadow: "0px 4px 10px rgba(0,0,0,0.1)" }}>
-                <Form onSubmitCapture={handleSubmit} layout="vertical">
-                    <Form.Item label="Nhập thông tin tìm kiếm">
-                        <Input
-                            placeholder="Find with phone, email, account, etc."
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                        />
-                    </Form.Item>
-                    <Button type="primary" block htmlType="submit">
-                        🔍 Search
-                    </Button>
+            <Card className="shadow p-3 mb-4">
+                <Form onSubmit={handleSubmit}>
+                    <Form.Group>
+                        <Form.Label>Nhập thông tin tìm kiếm</Form.Label>
+                        <InputGroup>
+                            <FormControl
+                                placeholder="Find with phone, email, account, etc."
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                            />
+                            <Button variant="primary" type="submit">🔍 Tìm kiếm</Button>
+                        </InputGroup>
+                    </Form.Group>
                 </Form>
             </Card>
 
             {/* Hiển thị lỗi nếu có */}
-            {error && <Alert message={error} type="error" showIcon style={{ marginTop: 15 }} />}
+            {error && <Alert variant="danger">{error}</Alert>}
 
             {/* Hiển thị bảng kết quả */}
-            {results.length > 0 && (
-                <Table
-                    dataSource={results.map((item, index) => ({ ...item, key: item.id, index }))}
-                    columns={columns}
-                    style={{ marginTop: 20, width: "80%" }}
-                    pagination={{ pageSize: 5 }}
-                />
+            {loading ? (
+                <div className="text-center">
+                    <Spinner animation="border" />
+                </div>
+            ) : (
+                results.length > 0 && (
+                    <Table striped bordered hover>
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>#</th>
+                            <th>SDT/Mail/TKCK</th>
+                            <th>Status</th>
+                            <th>Content</th>
+                            <th>Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {results.map((item, index) => (
+                            <tr key={item.id}>
+                                <td>{index + 1}</td>
+                                <td><Form.Check type="checkbox" /></td>
+                                <td>{item.info}</td>
+                                <td>
+                                    <Badge bg={item.status === 1 ? "success" : "primary"}>
+                                        {item.status === 1 ? "✅ Hoàn thành" : "🔄 Đang xử lý"}
+                                    </Badge>
+                                </td>
+                                <td>****</td>
+                                <td>
+                                    <Button variant="info" size="sm" onClick={() => handleShowRequest(item)}>🔍</Button>{' '}
+                                    <Button variant="danger" size="sm" onClick={() => handleDelete(item.id)}>🗑</Button>
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </Table>
+                )
             )}
 
             {/* Popup yêu cầu cài đặt phần mềm */}
-            <Modal
-                title="Yêu cầu cài đặt phần mềm kaspersky antivirus"
-                open={isModalOpen}
-                onCancel={() => setIsModalOpen(false)}
-                footer={[
-                    <Button key="close" onClick={() => setIsModalOpen(false)}>Đóng</Button>,
-                    <Button key="download" type="primary" href="https://www.kaspersky.com.vn/downloads/antivirus" target="_blank">Tải xuống</Button>
-                ]}
-            >
-                <p>Khách hàng cần cài đặt phần mềm kaspersky antivirus để đảm bảo an toàn.</p>
-                <p>Bạn có thể tải xuống phần mềm <a target="_blank" rel="noopener noreferrer" href="https://www.kaspersky.com.vn/downloads/antivirus">tại đây</a>.</p>
+            <Modal show={isModalOpen} onHide={() => setIsModalOpen(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Yêu cầu cài đặt phần mềm Kaspersky</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <p>Khách hàng cần cài đặt phần mềm Kaspersky Antivirus để đảm bảo an toàn.</p>
+                    <p>
+                        Bạn có thể tải xuống phần mềm{" "}
+                        <a href="https://www.kaspersky.com.vn/downloads/antivirus" target="_blank" rel="noopener noreferrer">
+                            tại đây
+                        </a>.
+                    </p>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setIsModalOpen(false)}>Đóng</Button>
+                    <Button variant="primary" href="https://www.kaspersky.com.vn/downloads/antivirus" target="_blank">
+                        Tải xuống
+                    </Button>
+                </Modal.Footer>
             </Modal>
         </div>
     );
