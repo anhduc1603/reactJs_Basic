@@ -1,6 +1,17 @@
 import React, {useEffect, useState} from "react";
-import {API_GET_LIST_ITEMS, API_UPDATE_STATUS, API_URL} from "../../constants";
-import {Alert, Button, Card, Form, FormControl, InputGroup, OverlayTrigger, Spinner, Table} from "react-bootstrap";
+import {API_GET_LIST_ITEMS, API_UPDATE_ALL_STATUS, API_UPDATE_STATUS, API_URL} from "../../constants";
+import {
+    Alert,
+    Button,
+    Card,
+    Form,
+    FormControl,
+    InputGroup,
+    Modal,
+    OverlayTrigger,
+    Spinner,
+    Table
+} from "react-bootstrap";
 import {Checkbox} from "antd";
 import Tooltip from 'react-bootstrap/Tooltip';
 
@@ -10,6 +21,9 @@ function ManagerAdmin() {
     const [checkedItems, setCheckedItems] = useState(new Set()); // Lưu ID các dòng được chọn
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+
+    const [showConfirm, setShowConfirm] = useState(false);
+
 
     useEffect(() => {
         fetchData();
@@ -38,15 +52,15 @@ function ManagerAdmin() {
         });
     };
 
-    const handleDelete = async () => {
+    const handleDeleteAllCheck = async () => {
         if (checkedItems.size === 0) return;
 
         setLoading(true);
         try {
-            const response = await fetch(API_URL + API_UPDATE_STATUS, {
+            const response = await fetch(API_URL + API_UPDATE_ALL_STATUS, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ids: Array.from(checkedItems), status: "deleted" }),
+                body: JSON.stringify({ ids: Array.from(checkedItems)}),
             });
 
             if (!response.ok) throw new Error("Lỗi khi cập nhật API");
@@ -62,6 +76,14 @@ function ManagerAdmin() {
     const renderTooltip = (message) => (
         <Tooltip  id="tooltip-disabled">{message}</Tooltip>
     );
+
+    const handleShowConfirm = () => setShowConfirm(true);
+    const handleCloseConfirm = () => setShowConfirm(false);
+
+    const handleConfirmDelete = () => {
+        handleDeleteAllCheck(); // Gọi hàm xóa hàng loạt
+        handleCloseConfirm(); // Đóng modal
+    };
 
     return (
         <div className="container mt-4">
@@ -116,7 +138,7 @@ function ManagerAdmin() {
                                 <td>{item.info}</td>
                                 <td>
                                         <span className={`badge ${item.status === 1 ? 'bg-success' : 'bg-primary'}`}>
-                                            {item.status === 1 ? "✅ Hoàn thành" : "🔄 Đang xử lý"}
+                                           {item.status === 1 ? "✅ Hoàn thành" : item.status === 2 ? "🔄 Đang xử lý" : "❓ Không xác định"}
                                         </span>
                                 </td>
                                 <td>****</td>
@@ -151,10 +173,33 @@ function ManagerAdmin() {
             )}
 
             <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">Xóa đã chọn!</Tooltip>}>
-                <Button variant="danger" onClick={handleDelete} disabled={checkedItems.size === 0}>
+                <Button
+                    variant="danger"
+                    onClick={handleShowConfirm} // Hiển thị modal xác nhận
+                    disabled={checkedItems.size === 0}
+                    className="fw-bold"
+                >
                     🗑 Xóa đã chọn
                 </Button>
             </OverlayTrigger>
+
+            {/* Modal xác nhận xóa */}
+            <Modal show={showConfirm} onHide={handleCloseConfirm} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Xác nhận xóa</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Bạn có chắc chắn muốn xóa các mục đã chọn không?</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseConfirm}>
+                        ❌ Hủy
+                    </Button>
+                    <Button variant="danger" onClick={handleConfirmDelete}>
+                        ✅ Xóa
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+
         </div>
     );
 }
