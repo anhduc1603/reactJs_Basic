@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {API_GET_LIST_ITEMS, API_UPDATE_ALL_STATUS, API_UPDATE_STATUS, API_URL} from "../../constants";
+import {API_GET_LIST_ITEMS, API_UPDATE_ALL_STATUS, API_URL} from "../../constants";
 import {
     Alert,
     Button,

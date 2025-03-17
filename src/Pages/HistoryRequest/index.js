@@ -2,9 +2,10 @@ import React, {useEffect, useState} from "react";
 import {
     Button, Form, Table, Alert, Card, Modal, Badge, Spinner, InputGroup, FormControl, OverlayTrigger
 } from "react-bootstrap";
-import {API_GET_LIST_ITEMS, API_UPDATE_ALL_STATUS, API_URL} from "../../constants";
+import {API_GET_ITEMS_BY_USERID, API_GET_LIST_ITEMS, API_UPDATE_ALL_STATUS, API_URL} from "../../constants";
 import Tooltip from 'react-bootstrap/Tooltip';
 import {Checkbox} from "antd";
+import {getUserID} from "../../Components/Login/AuthContext";
 
 function HistoryRequest() {
     const [query, setQuery] = useState("");
@@ -29,11 +30,13 @@ function HistoryRequest() {
     }, []);
 
 
+    const userIDGetItems = getUserID();
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
         setLoading(true);
-
+        console.log("userIDCheck" + userIDGetItems);
         try {
             const response = await fetch(API_URL + API_GET_LIST_ITEMS);
             if (!response.ok) throw new Error("Lỗi khi gọi API");
@@ -72,11 +75,15 @@ function HistoryRequest() {
     };
 
 
+
     const fetchData = async () => {
         setLoading(true);
         setError("");
+        console.log("userIDCheck" + userIDGetItems);
         try {
-            const response = await fetch(API_URL + API_GET_LIST_ITEMS);
+            const url = `${API_URL}${API_GET_ITEMS_BY_USERID}${encodeURIComponent(userIDGetItems)}`;
+
+            const response = await fetch(url);
             if (!response.ok) throw new Error("Lỗi khi gọi API");
             const result = await response.json();
             setResults(result.data || []);
@@ -118,6 +125,7 @@ function HistoryRequest() {
     };
 
 
+
     return (
         <div className="container mt-4">
             {/* Form tìm kiếm */}
@@ -131,7 +139,7 @@ function HistoryRequest() {
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
                             />
-                            <Button variant="primary" type="submit">
+                            <Button variant="primary" type="submit" onClick={handleSubmit}>
                                 🔍 Tìm kiếm
                             </Button>
                         </InputGroup>

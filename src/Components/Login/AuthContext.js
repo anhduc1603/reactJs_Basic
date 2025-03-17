@@ -61,3 +61,16 @@ export const getUserRole = () => {
         return null;
     }
 };
+
+export const getUserID = () => {
+    const token = localStorage.getItem("user"); // Lấy token từ localStorage
+    if (!token) return null; // Nếu không có token, trả về null
+
+    try {
+        const decoded = jwtDecode(token); // Giải mã token
+        return decoded.id; // Giả sử role được lưu trong token
+    } catch (error) {
+        console.error("Invalid token", error);
+        return null;
+    }
+};
