@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Form, Button, Alert, Modal } from 'react-bootstrap';
+import React, {useState} from 'react';
+import {Alert, Button, Form, Modal} from 'react-bootstrap';
 import axios from 'axios';
 import './SubmitContent.css';
-import {API_GET_ITEMS_BY_USERID, API_UPDATE, API_URL} from "../../constants"; // Import file CSS nếu bạn sử dụng file CSS riêng
+import {API_UPDATE, API_URL, STATUS_SUCCESS} from "../../constants"; // Import file CSS nếu bạn sử dụng file CSS riêng
 
 const SubmitContent = ({ show, handleClose,id, status }) => {
     const [inputValue, setInputValue] = useState('');
@@ -13,7 +13,7 @@ const SubmitContent = ({ show, handleClose,id, status }) => {
             const url = `${API_URL}${API_UPDATE}${encodeURIComponent(id)}`;
             await axios.post(url, {
                 content: inputValue ,
-                status: status
+                status: STATUS_SUCCESS
             });
             setMessage('Cập nhật thành công!');
             setTimeout(() => {

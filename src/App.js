@@ -9,6 +9,7 @@ import AppHeader from "./Components/AppHeader";
 import PageContent from "./Components/PageContent";
 import AppFooter from "./Components/AppFooter";
 import SideMenu from "./Components/SideMenu";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
 

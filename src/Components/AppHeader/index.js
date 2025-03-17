@@ -23,7 +23,7 @@ function AppHeader() {
     }, []);
 
     const getUser = () => {
-        const token = localStorage.getItem("user");
+        const token = localStorage.getItem("token");
         if (!token) return null;
 
         try {

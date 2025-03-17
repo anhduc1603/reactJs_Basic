@@ -23,7 +23,7 @@ export function AuthProvider({ children }) {
 
         const data = await response.json();
         if (response.ok) {
-            localStorage.setItem("user", JSON.stringify(data));
+            localStorage.setItem("token", JSON.stringify(data));
             setUser(data);
         } else {
             console.error("Login failed:", data.error);
@@ -31,7 +31,7 @@ export function AuthProvider({ children }) {
     };
 
     const logout = () => {
-        localStorage.removeItem("user");
+        localStorage.removeItem("token");
         setUser(null);
     };
 
@@ -50,7 +50,7 @@ export function useAuth() {
 
 
 export const getUserRole = () => {
-    const token = localStorage.getItem("user"); // Lấy token từ localStorage
+    const token = localStorage.getItem("token"); // Lấy token từ localStorage
     if (!token) return null; // Nếu không có token, trả về null
 
     try {
@@ -63,7 +63,7 @@ export const getUserRole = () => {
 };
 
 export const getUserID = () => {
-    const token = localStorage.getItem("user"); // Lấy token từ localStorage
+    const token = localStorage.getItem("token"); // Lấy token từ localStorage
     if (!token) return null; // Nếu không có token, trả về null
 
     try {

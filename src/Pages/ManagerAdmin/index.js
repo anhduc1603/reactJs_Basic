@@ -1,5 +1,5 @@
-import React, {useEffect, useRef, useState} from "react";
-import {API_GET_ITEMS_BY_USERID, API_GET_LIST_ITEMS, API_UPDATE, API_UPDATE_ALL_STATUS, API_URL} from "../../constants";
+import React, {useEffect, useState} from "react";
+import {API_GET_ITEMS_BY_ADMIN, API_GET_LIST_ITEMS, API_UPDATE_ALL_STATUS, API_URL} from "../../constants";
 import {
     Alert,
     Button,
@@ -14,7 +14,9 @@ import {
 } from "react-bootstrap";
 import {Checkbox} from "antd";
 import Tooltip from 'react-bootstrap/Tooltip';
-import SubmitContent from "../../Button/Admin/SubmitContent";
+import SubmitContent from "../../Button/SubmitContent/SubmitContent";
+import StatusUpdateModal from "../../Button/StatusUpdateModal/StatusUpdateModal";
+import StatusBadge from "../../Button/StatusInfo/StatusBadge";
 
 function ManagerAdmin() {
     const [query, setQuery] = useState("");
@@ -25,10 +27,12 @@ function ManagerAdmin() {
 
     const [showConfirm, setShowConfirm] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-
     const [pageSize, setPageSize] = useState(20); // default theo backend
-
     const [totalItems, setTotalItems] = useState(0);
+    const [modalItemId, setModalItemId] = useState(null); // ID row đang mở modal
+
+    const [showModalUpdateStatus, setShowModalUpdateStatus] = useState(false);
+
 
     useEffect(() => {
         fetchData(currentPage, pageSize);
@@ -38,8 +42,17 @@ function ManagerAdmin() {
         setLoading(true);
         setError("");
         try {
-            const url = `${API_URL}${API_GET_LIST_ITEMS}?page=${page}&limit=${limit}`;
-            const response = await fetch(url);
+            const tokenString = localStorage.getItem("token"); // Lấy token từ localStorage
+            const parsedToken = JSON.parse(tokenString); // Chuyển về object
+            const token = parsedToken.token; // Lấy đúng chuỗi token
+
+            if (!token) return null; // Nếu không có token, trả về null
+            const url = `${API_URL}${API_GET_ITEMS_BY_ADMIN}?page=${page}&limit=${limit}`;
+            const response = await fetch(url,{
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
             if (!response.ok) throw new Error("Lỗi khi gọi API");
             const result = await response.json();
             setResults(result.data || []);
@@ -97,15 +110,12 @@ function ManagerAdmin() {
     // Logic update content
     const [showModal, setShowModal] = useState(false);
 
-    const handleShow = () => setShowModal(true);
-    const handleClose = () => setShowModal(false);
-
 
     //Xoá request
     const handleDelete = async  (id) => {
         setLoading(true);
         try {
-            const response = await fetch(API_URL + API_UPDATE, {
+            const response = await fetch(API_URL + API_UPDATE_ALL_STATUS, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ ids: Array.from( [id])}),
@@ -113,6 +123,7 @@ function ManagerAdmin() {
 
             if (!response.ok) throw new Error("Lỗi khi cập nhật API");
             await fetchData(); // Load lại danh sách sau khi cập nhật
+            setCheckedItems(new Set()); // Reset danh sách đã chọn
         } catch (err) {
             setError(err.message);
         } finally {
@@ -120,6 +131,14 @@ function ManagerAdmin() {
         }
     };
 
+    const handleStatusUpdated = async () => {
+        await fetchData(); // Load lại danh sách sau khi cập nhật
+        console.log('Status updated!');
+    };
+
+    const handleSuccessUpdate = () => {
+        fetchData(currentPage, pageSize); // Reload data sau khi cập nhật thành công
+    };
 
     return (
         <div className="container mt-4">
@@ -173,23 +192,24 @@ function ManagerAdmin() {
                                 </td>
                                 <td>{item.info}</td>
                                 <td>
-                                        <span className={`badge ${item.status === 1 ? 'bg-success' : 'bg-primary'}`}>
-                                           {item.status === 1 ? "✅ Hoàn thành" : item.status === 2 ? "🔄 Đang xử lý" : "❓ Không xác định"}
-                                        </span>
+                                        {/*<span className={`badge ${item.status === 1 ? 'bg-success' : 'bg-primary'}`}>*/}
+                                        {/*   {item.status === 1 ? "✅ Hoàn thành" : item.status === 2 ? "🔄 Đang xử lý" : "❓ Không xác định"}*/}
+                                        {/*</span>*/}
+                                    <StatusBadge status={item.status} />
                                 </td>
                                 <td>{item.content}</td>
                                 <td>
 
                                     <OverlayTrigger placement="top" overlay={renderTooltip("Điền thông tin")}>
-                                        <Button variant="info" size="sm" onClick={handleShow}>📝</Button>
+                                        <Button variant="info" size="sm" onClick={() => { setModalItemId(item.id); setShowModal(true); }}>📝</Button>
                                     </OverlayTrigger>{ ' ' }
 
                                     <OverlayTrigger placement="top" overlay={renderTooltip("Thay đổi trạng thái")}>
-                                        <Button variant="secondary" size="sm" onClick={() => console.log("Thay đổi trạng thái:", item)}>🔄</Button>
+                                        <Button variant="secondary" size="sm" onClick={() =>{setModalItemId(item.id); setShowModalUpdateStatus(true);}}>🔄</Button>
                                     </OverlayTrigger>{ ' ' }
 
                                     <OverlayTrigger placement="top" overlay={renderTooltip("Xóa request có ID")}>
-                                        <Button variant="danger" size="sm" onClick={()=>console.log("Xoa id", item.id)}>🗑</Button>
+                                        <Button variant="danger" size="sm" onClick={()=> handleDelete(item.id)}>🗑</Button>
                                     </OverlayTrigger>{ ' ' }
 
                                     <OverlayTrigger placement="top" overlay={renderTooltip("Hiển thị thông tin")}>
@@ -200,8 +220,6 @@ function ManagerAdmin() {
                                         <Button variant="warning" size="sm" onClick={() => console.log("Upload file cho:", item)}>📤</Button>
                                     </OverlayTrigger>
 
-                                    {/* Modal Form */}
-                                    <SubmitContent show={showModal} handleClose={handleClose} id={item.id} status={1} />
                                 </td>
                             </tr>
                         ))}
@@ -209,6 +227,18 @@ function ManagerAdmin() {
                     </Table>
                 )
             )}
+
+            {/* Modal Form */}
+            <SubmitContent show={showModal} handleClose={() => setShowModal(false)} id={modalItemId} status={1} />
+
+            <StatusUpdateModal
+                show={showModalUpdateStatus}
+                onHide={() => setShowModalUpdateStatus(false)}
+                animation={false}
+                onStatusUpdated={handleStatusUpdated}
+                idUpdate={modalItemId}
+                onSuccessUpdate={handleSuccessUpdate}
+            />
 
             {/* Pagination & Limit control */}
             <div className="d-flex justify-content-between align-items-center mt-3">
