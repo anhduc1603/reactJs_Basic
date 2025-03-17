@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {API_GET_LIST_ITEMS, API_UPDATE_ALL_STATUS, API_URL} from "../../constants";
+import React, {useEffect, useRef, useState} from "react";
+import {API_GET_ITEMS_BY_USERID, API_GET_LIST_ITEMS, API_UPDATE, API_UPDATE_ALL_STATUS, API_URL} from "../../constants";
 import {
     Alert,
     Button,
@@ -14,6 +14,7 @@ import {
 } from "react-bootstrap";
 import {Checkbox} from "antd";
 import Tooltip from 'react-bootstrap/Tooltip';
+import SubmitContent from "../../Button/Admin/SubmitContent";
 
 function ManagerAdmin() {
     const [query, setQuery] = useState("");
@@ -23,20 +24,28 @@ function ManagerAdmin() {
     const [loading, setLoading] = useState(false);
 
     const [showConfirm, setShowConfirm] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
 
+    const [pageSize, setPageSize] = useState(20); // default theo backend
+
+    const [totalItems, setTotalItems] = useState(0);
 
     useEffect(() => {
-        fetchData();
+        fetchData(currentPage, pageSize);
     }, []);
 
-    const fetchData = async () => {
+    const fetchData = async (page = 1, limit = pageSize) => {
         setLoading(true);
         setError("");
         try {
-            const response = await fetch(API_URL + API_GET_LIST_ITEMS);
+            const url = `${API_URL}${API_GET_LIST_ITEMS}?page=${page}&limit=${limit}`;
+            const response = await fetch(url);
             if (!response.ok) throw new Error("Lỗi khi gọi API");
             const result = await response.json();
             setResults(result.data || []);
+            setCurrentPage(result.paging.page || 1);
+            setPageSize(result.paging.limit || 20);
+            setTotalItems(result.paging.total || 0);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -84,6 +93,33 @@ function ManagerAdmin() {
         handleDeleteAllCheck(); // Gọi hàm xóa hàng loạt
         handleCloseConfirm(); // Đóng modal
     };
+
+    // Logic update content
+    const [showModal, setShowModal] = useState(false);
+
+    const handleShow = () => setShowModal(true);
+    const handleClose = () => setShowModal(false);
+
+
+    //Xoá request
+    const handleDelete = async  (id) => {
+        setLoading(true);
+        try {
+            const response = await fetch(API_URL + API_UPDATE, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ids: Array.from( [id])}),
+            });
+
+            if (!response.ok) throw new Error("Lỗi khi cập nhật API");
+            await fetchData(); // Load lại danh sách sau khi cập nhật
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
 
     return (
         <div className="container mt-4">
@@ -141,12 +177,11 @@ function ManagerAdmin() {
                                            {item.status === 1 ? "✅ Hoàn thành" : item.status === 2 ? "🔄 Đang xử lý" : "❓ Không xác định"}
                                         </span>
                                 </td>
-                                <td>****</td>
+                                <td>{item.content}</td>
                                 <td>
 
-
                                     <OverlayTrigger placement="top" overlay={renderTooltip("Điền thông tin")}>
-                                        <Button variant="info" size="sm" onClick={() => console.log("Điền thông tin:", item)}>📝</Button>
+                                        <Button variant="info" size="sm" onClick={handleShow}>📝</Button>
                                     </OverlayTrigger>{ ' ' }
 
                                     <OverlayTrigger placement="top" overlay={renderTooltip("Thay đổi trạng thái")}>
@@ -154,7 +189,7 @@ function ManagerAdmin() {
                                     </OverlayTrigger>{ ' ' }
 
                                     <OverlayTrigger placement="top" overlay={renderTooltip("Xóa request có ID")}>
-                                        <Button variant="danger" size="sm" onClick={() => console.log("Xóa request có ID:", item.id)}>🗑</Button>
+                                        <Button variant="danger" size="sm" onClick={()=>console.log("Xoa id", item.id)}>🗑</Button>
                                     </OverlayTrigger>{ ' ' }
 
                                     <OverlayTrigger placement="top" overlay={renderTooltip("Hiển thị thông tin")}>
@@ -164,6 +199,9 @@ function ManagerAdmin() {
                                     <OverlayTrigger overlay={renderTooltip("Upload file")}  container={document.body}>
                                         <Button variant="warning" size="sm" onClick={() => console.log("Upload file cho:", item)}>📤</Button>
                                     </OverlayTrigger>
+
+                                    {/* Modal Form */}
+                                    <SubmitContent show={showModal} handleClose={handleClose} id={item.id} status={1} />
                                 </td>
                             </tr>
                         ))}
@@ -171,6 +209,55 @@ function ManagerAdmin() {
                     </Table>
                 )
             )}
+
+            {/* Pagination & Limit control */}
+            <div className="d-flex justify-content-between align-items-center mt-3">
+                {/* Chọn limit */}
+                <div className="d-flex align-items-center">
+                    <span className="me-2">Hiển thị:</span>
+                    <Form.Select
+                        value={pageSize}
+                        onChange={(e) => {
+                            setPageSize(Number(e.target.value));
+                            fetchData(1, Number(e.target.value));
+                        }}
+                        style={{ width: "100px" }}
+                        className="rounded-pill border-primary"
+                    >
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                    </Form.Select>
+                    <span className="ms-2">dòng/trang</span>
+                </div>
+
+                {/* Pagination */}
+                <div>
+                    <Button
+                        variant="outline-primary"
+                        size="sm"
+                        disabled={currentPage === 1}
+                        onClick={() => fetchData(currentPage - 1, pageSize)}
+                        className="me-2 rounded-pill"
+                    >
+                        ◀️ Trước
+                    </Button>
+
+                    <span className="fw-semibold">Trang {currentPage}</span>
+
+                    <Button
+                        variant="outline-primary"
+                        size="sm"
+                        disabled={currentPage * pageSize >= totalItems}
+                        onClick={() => fetchData(currentPage + 1, pageSize)}
+                        className="ms-2 rounded-pill"
+                    >
+                        Sau ▶️
+                    </Button>
+                </div>
+            </div>
+
 
             <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">Xóa đã chọn!</Tooltip>}>
                 <Button

@@ -1,10 +1,19 @@
 import React, {useEffect, useState} from "react";
 import {
-    Button, Form, Table, Alert, Card, Modal, Badge, Spinner, InputGroup, FormControl, OverlayTrigger
+    Alert,
+    Badge,
+    Button,
+    Card,
+    Form,
+    FormControl,
+    InputGroup,
+    Modal,
+    OverlayTrigger,
+    Spinner,
+    Table
 } from "react-bootstrap";
-import {API_GET_ITEMS_BY_USERID, API_GET_LIST_ITEMS, API_UPDATE_ALL_STATUS, API_URL} from "../../constants";
+import {API_GET_ITEMS_BY_USERID, API_UPDATE_ALL_STATUS, API_URL} from "../../constants";
 import Tooltip from 'react-bootstrap/Tooltip';
-import {Checkbox} from "antd";
 import {getUserID} from "../../Components/Login/AuthContext";
 
 function HistoryRequest() {
@@ -15,6 +24,12 @@ function HistoryRequest() {
     const [loading, setLoading] = useState(false);
     const [checkedItems,setCheckedItems] = useState(new Set());
     const [showConfirm, setShowConfirm] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const [pageSize, setPageSize] = useState(20); // default theo backend
+
+    const [totalItems, setTotalItems] = useState(0);
+
 
     const handleShowConfirm = () => setShowConfirm(true);
     const handleCloseConfirm = () => setShowConfirm(false);
@@ -26,7 +41,7 @@ function HistoryRequest() {
 
 
     useEffect(() => {
-        fetchData();
+        fetchData(currentPage, pageSize);
     }, []);
 
 
@@ -34,13 +49,14 @@ function HistoryRequest() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        await fetchData(1, pageSize); // Reset về trang 1
         setError("");
         setLoading(true);
         console.log("userIDCheck" + userIDGetItems);
         try {
-            const response = await fetch(API_URL + API_GET_LIST_ITEMS);
+            const url = `${API_URL}${API_GET_ITEMS_BY_USERID}${encodeURIComponent(userIDGetItems)}`;
+            const response = await fetch(url);
             if (!response.ok) throw new Error("Lỗi khi gọi API");
-
             const result = await response.json();
             setResults(result.data || []);
         } catch (err) {
@@ -51,7 +67,6 @@ function HistoryRequest() {
     };
 
     const handleDelete = async  (id) => {
-        console.log("id:=>" +id)
         setLoading(true);
         try {
             const response = await fetch(API_URL + API_UPDATE_ALL_STATUS, {
@@ -76,23 +91,26 @@ function HistoryRequest() {
 
 
 
-    const fetchData = async () => {
+    const fetchData = async (page = 1, limit = pageSize) => {
         setLoading(true);
         setError("");
-        console.log("userIDCheck" + userIDGetItems);
         try {
-            const url = `${API_URL}${API_GET_ITEMS_BY_USERID}${encodeURIComponent(userIDGetItems)}`;
-
+            const url = `${API_URL}${API_GET_ITEMS_BY_USERID}${encodeURIComponent(userIDGetItems)}?page=${page}&limit=${limit}`;
             const response = await fetch(url);
             if (!response.ok) throw new Error("Lỗi khi gọi API");
+
             const result = await response.json();
             setResults(result.data || []);
+            setCurrentPage(result.paging.page || 1);
+            setPageSize(result.paging.limit || 20);
+            setTotalItems(result.paging.total || 0);
         } catch (err) {
             setError(err.message);
         } finally {
             setLoading(false);
         }
     };
+
 
 
     const handleDeleteAllCheck = async () => {
@@ -123,7 +141,6 @@ function HistoryRequest() {
             return newChecked;
         });
     };
-
 
 
     return (
@@ -202,14 +219,61 @@ function HistoryRequest() {
                                         )}
                                     </div>
                                 </td>
-
-
                             </tr>
                         ))}
                         </tbody>
                     </Table>
                 )
             )}
+
+            {/* Pagination & Limit control */}
+            <div className="d-flex justify-content-between align-items-center mt-3">
+                {/* Chọn limit */}
+                <div className="d-flex align-items-center">
+                    <span className="me-2">Hiển thị:</span>
+                    <Form.Select
+                        value={pageSize}
+                        onChange={(e) => {
+                            setPageSize(Number(e.target.value));
+                            fetchData(1, Number(e.target.value));
+                        }}
+                        style={{ width: "100px" }}
+                        className="rounded-pill border-primary"
+                    >
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                    </Form.Select>
+                    <span className="ms-2">dòng/trang</span>
+                </div>
+
+                {/* Pagination */}
+                <div>
+                    <Button
+                        variant="outline-primary"
+                        size="sm"
+                        disabled={currentPage === 1}
+                        onClick={() => fetchData(currentPage - 1, pageSize)}
+                        className="me-2 rounded-pill"
+                    >
+                        ◀️ Trước
+                    </Button>
+
+                    <span className="fw-semibold">Trang {currentPage}</span>
+
+                    <Button
+                        variant="outline-primary"
+                        size="sm"
+                        disabled={currentPage * pageSize >= totalItems}
+                        onClick={() => fetchData(currentPage + 1, pageSize)}
+                        className="ms-2 rounded-pill"
+                    >
+                        Sau ▶️
+                    </Button>
+                </div>
+            </div>
+
 
             {/* Popup yêu cầu cài đặt phần mềm */}
             <Modal show={isModalOpen} onHide={() => setIsModalOpen(false)} centered>
