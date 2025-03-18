@@ -52,7 +52,7 @@ function StatusUpdateModal({ show, onHide,idUpdate,onSuccessUpdate }) {
                             <option value="1">Hoàn thành</option>
                             <option value="2">Đang xử lý</option>
                             <option value="3">User đã bấm vào nút "hiển thị dữ liệu"</option>
-                            <option value="4">User đã bấm vào nút "hiển thị dữ liệu"</option>
+                            <option value="4">User đã bấm vào nút "download"</option>
                         </Form.Select>
                     </Form.Group>
                 </Form>
