@@ -17,6 +17,8 @@ import Tooltip from 'react-bootstrap/Tooltip';
 import SubmitContent from "../../Button/SubmitContent/SubmitContent";
 import StatusUpdateModal from "../../Button/StatusUpdateModal/StatusUpdateModal";
 import StatusBadge from "../../Button/StatusInfo/StatusBadge";
+import InfoModal from "../../Button/InfoModal/InfoModal";
+import FileUploadModal from "../../Button/FileUploadModal/FileUploadModal";
 
 function ManagerAdmin() {
     const [query, setQuery] = useState("");
@@ -32,8 +34,9 @@ function ManagerAdmin() {
     const [modalItemId, setModalItemId] = useState(null); // ID row đang mở modal
 
     const [showModalUpdateStatus, setShowModalUpdateStatus] = useState(false);
-
-
+    const [modalShow, setModalShow] = useState(false);
+    const [selectedId, setSelectedId] = useState(null);
+    const [showModalUploadFile, setShowModalUploadFile] = useState(false);
     useEffect(() => {
         fetchData(currentPage, pageSize);
     }, []);
@@ -140,6 +143,19 @@ function ManagerAdmin() {
         fetchData(currentPage, pageSize); // Reload data sau khi cập nhật thành công
     };
 
+    const handleOpenModal = (id) => {
+        setSelectedId(id);
+        setModalShow(true);
+    };
+
+    const handleCloseModal = () => {
+        setModalShow(false);
+        setSelectedId(null);
+    };
+
+    const handleOpenUploadFile = () => setShowModalUploadFile(true);
+    const handleCloseUploadFile = () => setShowModalUploadFile(false);
+
     return (
         <div className="container mt-4">
             {/* Form tìm kiếm */}
@@ -213,11 +229,11 @@ function ManagerAdmin() {
                                     </OverlayTrigger>{ ' ' }
 
                                     <OverlayTrigger placement="top" overlay={renderTooltip("Hiển thị thông tin")}>
-                                        <Button variant="primary" size="sm" onClick={() => console.log("Hiển thị thông tin:", item)}>🔍</Button>
+                                        <Button variant="primary" size="sm" onClick={() => handleOpenModal(item.id)}>🔍</Button>
                                     </OverlayTrigger>{ ' ' }
 
                                     <OverlayTrigger overlay={renderTooltip("Upload file")}  container={document.body}>
-                                        <Button variant="warning" size="sm" onClick={() => console.log("Upload file cho:", item)}>📤</Button>
+                                        <Button variant="warning" size="sm" onClick={() => handleOpenUploadFile()}>📤</Button>
                                     </OverlayTrigger>
 
                                 </td>
@@ -239,6 +255,14 @@ function ManagerAdmin() {
                 idUpdate={modalItemId}
                 onSuccessUpdate={handleSuccessUpdate}
             />
+
+            <InfoModal
+                show={modalShow}
+                handleClose={handleCloseModal}
+                id={selectedId}
+            />
+
+            <FileUploadModal show={showModalUploadFile} handleClose={handleCloseUploadFile} />
 
             {/* Pagination & Limit control */}
             <div className="d-flex justify-content-between align-items-center mt-3">
