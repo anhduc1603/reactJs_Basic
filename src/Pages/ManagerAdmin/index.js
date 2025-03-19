@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {API_GET_ITEMS_BY_ADMIN, API_GET_LIST_ITEMS, API_UPDATE_ALL_STATUS, API_URL} from "../../constants";
+import {API_GET_ITEMS_BY_ADMIN, API_UPDATE_ALL_STATUS, API_URL} from "../../constants";
 import {
     Alert,
     Button,
@@ -213,8 +213,10 @@ function ManagerAdmin() {
                                         {/*</span>*/}
                                     <StatusBadge status={item.status} />
                                 </td>
-                                <td>{item.content}</td>
-                                <td>
+                                <td  style={{ paddingRight: "50px" }}>
+                                    {item.content}
+                                </td>
+                                <td className="d-flex gap-2 flex-wrap">
 
                                     <OverlayTrigger placement="top" overlay={renderTooltip("Điền thông tin")}>
                                         <Button variant="info" size="sm" onClick={() => { setModalItemId(item.id); setShowModal(true); }}>📝</Button>
@@ -312,13 +314,12 @@ function ManagerAdmin() {
                 </div>
             </div>
 
-
             <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">Xóa đã chọn!</Tooltip>}>
                 <Button
                     variant="danger"
                     onClick={handleShowConfirm} // Hiển thị modal xác nhận
                     disabled={checkedItems.size === 0}
-                    className="fw-bold"
+                    className="fw-bold mt-3"
                 >
                     🗑 Xóa đã chọn
                 </Button>

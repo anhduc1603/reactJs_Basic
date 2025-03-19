@@ -1,8 +1,8 @@
-import { AppstoreOutlined, SearchOutlined, FileSearchOutlined, UserOutlined, SettingOutlined } from "@ant-design/icons";
-import { Menu } from "antd";
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import {getUserRole, useAuth} from "../Login/AuthContext"; // Lấy user từ context
+import {AppstoreOutlined, FileSearchOutlined, SearchOutlined, UserOutlined} from "@ant-design/icons";
+import {Menu} from "antd";
+import {useEffect, useState} from "react";
+import {useLocation, useNavigate} from "react-router-dom";
+import {getUserRole} from "../Login/AuthContext"; // Lấy user từ context
 import 'bootstrap/dist/css/bootstrap.css';
 
 function SideMenu() {

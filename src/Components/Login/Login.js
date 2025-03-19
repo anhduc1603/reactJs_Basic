@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { useAuth } from "./AuthContext";
-import { useNavigate } from "react-router-dom";
-import { Container, Form, Button, Card } from "react-bootstrap";
+import React, {useEffect, useState} from "react";
+import {useAuth} from "./AuthContext";
+import {useNavigate} from "react-router-dom";
+import {Button, Card, Col, Container, Form, Row} from "react-bootstrap"; // Đổi từ antd sang bootstrap
 import 'bootstrap/dist/css/bootstrap.css';
-import { Col, Row } from "react-bootstrap"; // Đổi từ antd sang bootstrap
-import { FaGoogle, FaFacebook } from "react-icons/fa";
+import {FaFacebook, FaGoogle} from "react-icons/fa";
+import {API_URL, LOGIN_GOOGLE} from "../../constants";
 
 const Login = () => {
     const [username, setUsername] = useState("");
@@ -15,19 +15,30 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         await login(username, password);
-        navigate("/dashboard");
+        navigate("/");
     };
 
+    useEffect(() => {
+        const queryParams = new URLSearchParams(window.location.search);
+        const token = queryParams.get("token");
+
+        if (token) {
+            localStorage.setItem("token", token);
+            navigate("/dashboard");
+        } else {
+            navigate("/login");
+        }
+    }, [navigate]);
+
     const handleGoogleLogin = async (e) => {
-        e.preventDefault();
-        await login(username, password);
-        navigate("/dashboard");
+        const url = `${API_URL}${LOGIN_GOOGLE}`;
+        window.location.href = url
     };
 
     const handleFacebookLogin = async (e) => {
         e.preventDefault();
         await login(username, password);
-        navigate("/dashboard");
+        navigate("/");
     };
 
     return (
