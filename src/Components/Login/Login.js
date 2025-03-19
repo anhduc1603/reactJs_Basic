@@ -15,7 +15,7 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         await login(username, password);
-        navigate("/");
+        navigate("/dashboard");
     };
 
     useEffect(() => {

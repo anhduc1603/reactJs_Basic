@@ -4,26 +4,34 @@ import {API_LOGIN, API_URL} from "../../constants";
 
 const AuthContext = createContext();
 
-export function AuthProvider({ children }) {
+export function AuthProvider({children}) {
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true); // 🔥
 
     useEffect(() => {
-        const savedUser = localStorage.getItem("user");
-        if (savedUser) {
-            setUser(JSON.parse(savedUser));
+        const savedToken = localStorage.getItem("token");
+        if (savedToken) {
+            try {
+                const decoded = jwtDecode(savedToken); // Giải mã token
+                setUser(decoded); // Gán thông tin user
+            } catch (error) {
+                console.error("Invalid token", error);
+                setUser(null);
+            }
         }
+        setLoading(false); // ✅ Kết thúc loading
     }, []);
 
     const login = async (username, password) => {
-        const response = await fetch(API_URL+API_LOGIN, {
+        const response = await fetch(API_URL + API_LOGIN, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, password }),
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({username, password}),
         });
 
         const data = await response.json();
         if (response.ok) {
-            localStorage.setItem("token", JSON.stringify(data));
+            localStorage.setItem("token", data.token);
             setUser(data);
         } else {
             console.error("Login failed:", data.error);
@@ -37,7 +45,7 @@ export function AuthProvider({ children }) {
 
 
     return (
-        <AuthContext.Provider value={{ user, login, logout }}>
+        <AuthContext.Provider value={{user, login, logout,loading}}>
             {children}
         </AuthContext.Provider>
     );
@@ -48,27 +56,27 @@ export function useAuth() {
 }
 
 
-
 export const getUserRole = () => {
-    const token = localStorage.getItem("token"); // Lấy token từ localStorage
-    if (!token) return null; // Nếu không có token, trả về null
+    const token = localStorage.getItem("token");
+    if (!token) return null;
 
     try {
-        const decoded = jwtDecode(token); // Giải mã token
-        return decoded.role; // Giả sử role được lưu trong token
+        const decoded = jwtDecode(token);
+        return decoded.role;
     } catch (error) {
         console.error("Invalid token", error);
         return null;
     }
 };
 
+
 export const getUserID = () => {
-    const token = localStorage.getItem("token"); // Lấy token từ localStorage
-    if (!token) return null; // Nếu không có token, trả về null
+    const token = localStorage.getItem("token");
+    if (!token) return null;
 
     try {
-        const decoded = jwtDecode(token); // Giải mã token
-        return decoded.id; // Giả sử role được lưu trong token
+        const decoded = jwtDecode(token);
+        return decoded.id;
     } catch (error) {
         console.error("Invalid token", error);
         return null;

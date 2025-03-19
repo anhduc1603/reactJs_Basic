@@ -10,30 +10,20 @@ import HistoryRequest from "./Pages/HistoryRequest";
 import Register from "./Components/Register/Register";
 import ManagerAdmin from "./Pages/ManagerAdmin";
 import OAuthSuccess from "./Components/Login/OAuthSuccess";
+import ProtectedRoute from "./Components/Login/ProtectedRoute";
 
 function App() {
-
-
-
   return (
-    // <div className="App">
-    //   <AppHeader />
-    //   <div className="SideMenuAndPageContent">
-    //     <SideMenu></SideMenu>
-    //     <PageContent></PageContent>
-    //   </div>
-    //   <AppFooter />
-    // </div>
-    //   <HistoryRequest/>
-      // <Search/>
-
-
      <div className="App">
          <AuthProvider>
              <Routes>
                  {/* Routes dùng chung Layout */}
                  <Route path="/" element={<MainLayout />}>
-                     <Route path="/"  element={<Dashboard />} />
+                     <Route path="/dashboard"  element={
+                         <ProtectedRoute>
+                             <Dashboard />
+                         </ProtectedRoute>
+                     } />
                      <Route path="search" element={<Search />} />
                      <Route path="history-request" element={<HistoryRequest />} />
                      <Route path="register" element={<Register />} />
@@ -44,7 +34,6 @@ function App() {
                  {/* Route riêng không dùng Layout */}
                  <Route path="/login" element={<Login />} />
              </Routes>
-
          </AuthProvider>
      </div>
   );

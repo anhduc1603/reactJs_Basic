@@ -12,7 +12,8 @@ const OAuthSuccess = () => {
             // Lưu token
             localStorage.setItem("token", token);
             // Redirect Dashboard
-            navigate("/dashboard");
+            // navigate("/dashboard", { replace: true });
+            window.location.href = "/dashboard";
         } else {
             // Không có token → quay lại login
             navigate("/login");

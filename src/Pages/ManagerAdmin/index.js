@@ -46,14 +46,11 @@ function ManagerAdmin() {
         setError("");
         try {
             const tokenString = localStorage.getItem("token"); // Lấy token từ localStorage
-            const parsedToken = JSON.parse(tokenString); // Chuyển về object
-            const token = parsedToken.token; // Lấy đúng chuỗi token
-
-            if (!token) return null; // Nếu không có token, trả về null
+            if (!tokenString) return null; // Nếu không có token, trả về null
             const url = `${API_URL}${API_GET_ITEMS_BY_ADMIN}?page=${page}&limit=${limit}`;
             const response = await fetch(url,{
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    Authorization: `Bearer ${tokenString}`
                 }
             });
             if (!response.ok) throw new Error("Lỗi khi gọi API");
