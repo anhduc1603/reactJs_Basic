@@ -8,5 +8,10 @@ export const API_UPDATE_ALL_STATUS = "/v1/update/all"
 export const API_GET_ITEMS_BY_USERID = "/v1/list/"
 export const API_GET_ITEMS_BY_ADMIN = "/admin/items"
 export const API_GET_DISPLAY_ITEM_BY_ID = "/v1/item/display/"
+export const API_GET_ITEM_BY_SEARCH ="/v1/items/search/"
+
+//Login with google
+export const LOGIN_GOOGLE ="/auth/login"
+
 
 export const STATUS_SUCCESS = 1;

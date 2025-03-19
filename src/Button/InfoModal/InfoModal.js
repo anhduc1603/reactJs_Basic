@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Modal, Button, Spinner } from 'react-bootstrap';
+import React, {useEffect, useState} from 'react';
+import {Button, Modal, Spinner} from 'react-bootstrap';
 import axios from 'axios';
-import {API_GET_DISPLAY_ITEM_BY_ID, API_UPDATE, API_URL} from "../../constants";
+import {API_GET_DISPLAY_ITEM_BY_ID, API_URL} from "../../constants";
 
 const InfoModal = ({ show, handleClose, id }) => {
     const [data, setData] = useState(null);

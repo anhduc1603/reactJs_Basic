@@ -3,13 +3,13 @@ import Dashboard from "./Pages/Dashbaord";
 import Login from "./Components/Login/Login";
 import {Route, Routes} from "react-router-dom";
 import {AuthProvider} from "./Components/Login/AuthContext";
-import AdminRoute from "./Components/Login/AdminRoute";
-import AdminPanel from "./Components/Admin/AdminPanel";
-import AppHeader from "./Components/AppHeader";
-import PageContent from "./Components/PageContent";
-import AppFooter from "./Components/AppFooter";
-import SideMenu from "./Components/SideMenu";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import MainLayout from "./Layouts/MainLayout";
+import Search from "./Pages/Search";
+import HistoryRequest from "./Pages/HistoryRequest";
+import Register from "./Components/Register/Register";
+import ManagerAdmin from "./Pages/ManagerAdmin";
+import OAuthSuccess from "./Components/Login/OAuthSuccess";
 
 function App() {
 
@@ -30,19 +30,21 @@ function App() {
 
      <div className="App">
          <AuthProvider>
-             <AppHeader />
-             <SideMenu />
-                 <Routes>
-                     <Route path="/dashboard" element={<Dashboard />} />
-                     <Route path="/login" element={<Login />} />
-                     <Route path="/admin" element={
-                         <AdminRoute>
-                             <AdminPanel />
-                         </AdminRoute>
-                     } />
-                 </Routes>
-             <PageContent></PageContent>
-             <AppFooter />
+             <Routes>
+                 {/* Routes dùng chung Layout */}
+                 <Route path="/" element={<MainLayout />}>
+                     <Route path="/"  element={<Dashboard />} />
+                     <Route path="search" element={<Search />} />
+                     <Route path="history-request" element={<HistoryRequest />} />
+                     <Route path="register" element={<Register />} />
+                     <Route path="manager-admin" element={<ManagerAdmin />} />
+                     <Route path="oauth-success" element={<OAuthSuccess />} />
+                 </Route>
+
+                 {/* Route riêng không dùng Layout */}
+                 <Route path="/login" element={<Login />} />
+             </Routes>
+
          </AuthProvider>
      </div>
   );

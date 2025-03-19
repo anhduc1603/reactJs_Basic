@@ -1,14 +1,20 @@
-import React from "react";
-
+import React from 'react';
+import {Button} from 'react-bootstrap';
+import {API_URL, LOGIN_GOOGLE} from "../../constants";
 
 const LoginWithGoogle = () => {
+    const handleLogin = () => {
+        // Redirect tới endpoint backend để login Google
+        const url = `${API_URL}${LOGIN_GOOGLE}`;
+
+        window.location.href = url
+    };
 
     return (
-        <div>
-            <h1>Login with Google</h1>
-            <a href="http://localhost:8080/auth/login">
-                <button>Login with Google</button>
-            </a>
+        <div className="d-flex justify-content-center align-items-center vh-100">
+            <Button variant="danger" onClick={handleLogin}>
+                <i className="bi bi-google me-2"></i> Login with Google
+            </Button>
         </div>
     );
 };
