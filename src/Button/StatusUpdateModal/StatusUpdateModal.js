@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import {Modal, Button, Form, Alert} from 'react-bootstrap';
-import {API_UPDATE, API_URL} from "../../constants";
+import {API_UPDATE} from "../../constants";
 import axios from "axios";
-
-
 
 function StatusUpdateModal({ show, onHide,idUpdate,onSuccessUpdate }) {
     const [selectedStatus, setSelectedStatus] = useState('');
     const [message, setMessage] = useState('');
+    const backendURL = process.env.REACT_APP_API_URL_BACKEND;
     const handleConfirm = async () => {
         if (!selectedStatus) {
             alert('Vui lòng chọn trạng thái!');
@@ -15,7 +14,7 @@ function StatusUpdateModal({ show, onHide,idUpdate,onSuccessUpdate }) {
         }
 
         try {
-            const url = `${API_URL}${API_UPDATE}${encodeURIComponent(idUpdate)}`;
+            const url = `${backendURL}${API_UPDATE}${encodeURIComponent(idUpdate)}`;
             await axios.post(url, {
                 status: +selectedStatus
             });

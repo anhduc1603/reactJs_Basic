@@ -1,8 +1,9 @@
 import {createContext, useContext, useEffect, useState} from "react";
 import {jwtDecode} from "jwt-decode";
-import {API_LOGIN, API_URL} from "../../constants";
+import {API_LOGIN} from "../../constants";
 
 const AuthContext = createContext();
+const backendURL = process.env.REACT_APP_API_URL_BACKEND;
 
 export function AuthProvider({children}) {
     const [user, setUser] = useState(null);
@@ -23,18 +24,26 @@ export function AuthProvider({children}) {
     }, []);
 
     const login = async (username, password) => {
-        const response = await fetch(API_URL + API_LOGIN, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({username, password}),
-        });
+        try {
+            const response = await fetch(backendURL + API_LOGIN, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password }),
+            });
 
-        const data = await response.json();
-        if (response.ok) {
-            localStorage.setItem("token", data.token);
-            setUser(data);
-        } else {
-            console.error("Login failed:", data.error);
+            const data = await response.json();
+
+            if (response.ok) {
+                localStorage.setItem("token", data.token);
+                setUser(data);
+                return true; // ✅ Login thành công
+            } else {
+                console.error("Login failed:", data.error);
+                return false; // ❌ Sai tài khoản/mật khẩu
+            }
+        } catch (error) {
+            console.error("Login error:", error);
+            return false; // ❌ Lỗi hệ thống
         }
     };
 

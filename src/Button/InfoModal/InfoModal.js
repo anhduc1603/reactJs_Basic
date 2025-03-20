@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Modal, Spinner} from 'react-bootstrap';
 import axios from 'axios';
-import {API_GET_DISPLAY_ITEM_BY_ID, API_URL} from "../../constants";
+import {API_GET_DISPLAY_ITEM_BY_ID} from "../../constants";
 
 const InfoModal = ({ show, handleClose, id }) => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
-
+    const backendURL = process.env.REACT_APP_API_URL_BACKEND;
     useEffect(() => {
         if (show && id) {
             fetchData();
@@ -16,7 +16,7 @@ const InfoModal = ({ show, handleClose, id }) => {
     const fetchData = async () => {
         try {
             setLoading(true);
-            const url = `${API_URL}${API_GET_DISPLAY_ITEM_BY_ID}${encodeURIComponent(id)}`;
+            const url = `${backendURL}${API_GET_DISPLAY_ITEM_BY_ID}${encodeURIComponent(id)}`;
             const response = await axios.get(url);
             setData(response.data.data);
         } catch (error) {

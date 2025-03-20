@@ -12,7 +12,7 @@ import {
     Spinner,
     Table
 } from "react-bootstrap";
-import {API_GET_ITEMS_BY_USERID, API_UPDATE_ALL_STATUS, API_URL} from "../../constants";
+import {API_GET_ITEMS_BY_USERID, API_UPDATE_ALL_STATUS} from "../../constants";
 import Tooltip from 'react-bootstrap/Tooltip';
 import {getUserID} from "../../Components/Login/AuthContext";
 
@@ -25,11 +25,9 @@ function HistoryRequest() {
     const [checkedItems,setCheckedItems] = useState(new Set());
     const [showConfirm, setShowConfirm] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
-
     const [pageSize, setPageSize] = useState(20); // default theo backend
-
     const [totalItems, setTotalItems] = useState(0);
-
+    const backendURL = process.env.REACT_APP_API_URL_BACKEND;
 
     const handleShowConfirm = () => setShowConfirm(true);
     const handleCloseConfirm = () => setShowConfirm(false);
@@ -54,7 +52,7 @@ function HistoryRequest() {
         setLoading(true);
         console.log("userIDCheck" + userIDGetItems);
         try {
-            const url = `${API_URL}${API_GET_ITEMS_BY_USERID}${encodeURIComponent(userIDGetItems)}`;
+            const url = `${backendURL}${API_GET_ITEMS_BY_USERID}${encodeURIComponent(userIDGetItems)}`;
             const response = await fetch(url);
             if (!response.ok) throw new Error("Lỗi khi gọi API");
             const result = await response.json();
@@ -69,7 +67,7 @@ function HistoryRequest() {
     const handleDelete = async  (id) => {
         setLoading(true);
         try {
-            const response = await fetch(API_URL + API_UPDATE_ALL_STATUS, {
+            const response = await fetch(backendURL + API_UPDATE_ALL_STATUS, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ ids: Array.from( [id])}),
@@ -95,7 +93,7 @@ function HistoryRequest() {
         setLoading(true);
         setError("");
         try {
-            const url = `${API_URL}${API_GET_ITEMS_BY_USERID}${encodeURIComponent(userIDGetItems)}?page=${page}&limit=${limit}`;
+            const url = `${backendURL}${API_GET_ITEMS_BY_USERID}${encodeURIComponent(userIDGetItems)}?page=${page}&limit=${limit}`;
             const response = await fetch(url);
             if (!response.ok) throw new Error("Lỗi khi gọi API");
 
@@ -118,7 +116,7 @@ function HistoryRequest() {
 
         setLoading(true);
         try {
-            const response = await fetch(API_URL + API_UPDATE_ALL_STATUS, {
+            const response = await fetch(backendURL + API_UPDATE_ALL_STATUS, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ ids: Array.from(checkedItems)}),

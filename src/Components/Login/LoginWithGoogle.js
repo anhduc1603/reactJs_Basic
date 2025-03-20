@@ -1,11 +1,12 @@
 import React from 'react';
 import {Button} from 'react-bootstrap';
-import {API_URL, LOGIN_GOOGLE} from "../../constants";
+import {LOGIN_GOOGLE} from "../../constants";
 
 const LoginWithGoogle = () => {
+    const backendURL = process.env.REACT_APP_API_URL_BACKEND;
     const handleLogin = () => {
         // Redirect tới endpoint backend để login Google
-        const url = `${API_URL}${LOGIN_GOOGLE}`;
+        const url = `${backendURL}${LOGIN_GOOGLE}`;
 
         window.location.href = url
     };
