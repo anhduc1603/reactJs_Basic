@@ -2,15 +2,15 @@ import React, {useState} from 'react';
 import {Alert, Button, Form, Modal} from 'react-bootstrap';
 import axios from 'axios';
 import './SubmitContent.css';
-import {API_UPDATE, API_URL, STATUS_SUCCESS} from "../../constants"; // Import file CSS nếu bạn sử dụng file CSS riêng
+import {API_UPDATE, STATUS_SUCCESS} from "../../constants"; // Import file CSS nếu bạn sử dụng file CSS riêng
 
 const SubmitContent = ({ show, handleClose,id, status }) => {
     const [inputValue, setInputValue] = useState('');
     const [message, setMessage] = useState('');
-
+    const backendURL = process.env.REACT_APP_API_URL_BACKEND;
     const handleSubmit = async () => {
         try {
-            const url = `${API_URL}${API_UPDATE}${encodeURIComponent(id)}`;
+            const url = `${backendURL}${API_UPDATE}${encodeURIComponent(id)}`;
             await axios.post(url, {
                 content: inputValue ,
                 status: STATUS_SUCCESS

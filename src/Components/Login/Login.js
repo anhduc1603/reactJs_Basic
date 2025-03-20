@@ -1,21 +1,57 @@
 import React, {useEffect, useState} from "react";
-import {useAuth} from "./AuthContext";
+import {getUserID, useAuth} from "./AuthContext";
 import {useNavigate} from "react-router-dom";
 import {Button, Card, Col, Container, Form, Row} from "react-bootstrap"; // Đổi từ antd sang bootstrap
 import 'bootstrap/dist/css/bootstrap.css';
 import {FaFacebook, FaGoogle} from "react-icons/fa";
-import {API_URL, LOGIN_GOOGLE} from "../../constants";
+import {API_SAVE_USER_LOGS, LOGIN_GOOGLE} from "../../constants";
+import {getPublicIP} from "../../Utils/getPublicIP";
+
+
 
 const Login = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
     const { login } = useAuth();
     const navigate = useNavigate();
+    const backendURL = process.env.REACT_APP_API_URL_BACKEND;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await login(username, password);
-        navigate("/dashboard");
+        try {
+            const success = await login(username, password);
+            if (success) {
+                // Sau khi login thành công => Gọi API lưu user_logs
+                const userIDGetItems = getUserID();
+                if (!userIDGetItems) {
+                    console.error("Không lấy được userID");
+                    setErrorMessage("Có lỗi xảy ra!");
+                    navigate("/dashboard");
+                }
+                const ipPublicUser = await getPublicIP();
+                const logData = {
+                    userid: userIDGetItems, // Giả sử backend trả về user_id
+                    ip_public: ipPublicUser,
+                    user_agent: navigator.userAgent,
+                    action :"login"
+                };
+                const urlSaveUserLogs = backendURL + API_SAVE_USER_LOGS
+                await fetch(urlSaveUserLogs, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"},
+                    body: JSON.stringify(logData),
+                });
+
+                navigate("/dashboard");
+            } else {
+                setErrorMessage("Sai tài khoản hoặc mật khẩu!");
+            }
+        } catch (error) {
+            console.error("Login Error:", error);
+            setErrorMessage("Lỗi server, vui lòng thử lại!");
+        }
     };
 
     useEffect(() => {
@@ -30,8 +66,18 @@ const Login = () => {
         }
     }, [navigate]);
 
+    useEffect(() => {
+        if (errorMessage) {
+            const timer = setTimeout(() => {
+                setErrorMessage("");
+            }, 3000); // 3s
+
+            return () => clearTimeout(timer);
+        }
+    }, [errorMessage]);
+
     const handleGoogleLogin = async (e) => {
-        const url = `${API_URL}${LOGIN_GOOGLE}`;
+        const url = `${backendURL}${LOGIN_GOOGLE}`;
         window.location.href = url
     };
 
@@ -101,6 +147,17 @@ const Login = () => {
                     </Button>
                 </div>
             </Card>
+
+
+            {errorMessage && (
+                <div
+                    className="alert alert-danger position-fixed top-0 start-50 translate-middle-x mt-3"
+                    style={{ zIndex: 9999, width: "400px", textAlign: "center" }}
+                    role="alert"
+                >
+                    {errorMessage}
+                </div>
+            )}
         </Container>
     );
 };

@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Container, Form, Button, Card } from "react-bootstrap";
-import {API_REGISTER, API_URL} from "../../constants";
+import {API_REGISTER} from "../../constants";
 
 const Register = () => {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
-
+    const backendURL = process.env.REACT_APP_API_URL_BACKEND;
     const handleRegister = async (e) => {
         e.preventDefault();
 
-        // Gửi request đến API đăng ký (giả định API_URL có endpoint /register)
-        const response = await fetch(API_URL+API_REGISTER, {
+        // Gửi request đến API đăng ký (giả định API_URL_BACKEND có endpoint /register)
+        const response = await fetch(backendURL+API_REGISTER, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, email, password }),

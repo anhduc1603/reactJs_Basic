@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Button, Card, Form, FormControl, InputGroup, Table, Spinner, Alert } from "react-bootstrap";
-import {API_GET_ITEM_BY_SEARCH, API_URL} from "../../constants";
+import {API_GET_ITEM_BY_SEARCH} from "../../constants";
 
 function Search() {
     const [query, setQuery] = useState("");
     const [error, setError] = useState("");
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
-
+    const backendURL = process.env.REACT_APP_API_URL_BACKEND;
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (query.trim().length === 0) return;
@@ -15,7 +15,7 @@ function Search() {
         setLoading(true);
 
         try {
-            const url = `${API_URL}${API_GET_ITEM_BY_SEARCH}${encodeURIComponent(query)}`;
+            const url = `${backendURL}${API_GET_ITEM_BY_SEARCH}${encodeURIComponent(query)}`;
             const response = await fetch(url, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem("token") || ""}`

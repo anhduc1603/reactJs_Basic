@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {API_GET_ITEMS_BY_ADMIN, API_UPDATE_ALL_STATUS, API_URL} from "../../constants";
+import {API_GET_ITEMS_BY_ADMIN, API_UPDATE_ALL_STATUS} from "../../constants";
 import {
     Alert,
     Button,
@@ -37,6 +37,8 @@ function ManagerAdmin() {
     const [modalShow, setModalShow] = useState(false);
     const [selectedId, setSelectedId] = useState(null);
     const [showModalUploadFile, setShowModalUploadFile] = useState(false);
+    const backendURL = process.env.REACT_APP_API_URL_BACKEND;
+
     useEffect(() => {
         fetchData(currentPage, pageSize);
     }, []);
@@ -47,7 +49,7 @@ function ManagerAdmin() {
         try {
             const tokenString = localStorage.getItem("token"); // Lấy token từ localStorage
             if (!tokenString) return null; // Nếu không có token, trả về null
-            const url = `${API_URL}${API_GET_ITEMS_BY_ADMIN}?page=${page}&limit=${limit}`;
+            const url = `${backendURL}${API_GET_ITEMS_BY_ADMIN}?page=${page}&limit=${limit}`;
             const response = await fetch(url,{
                 headers: {
                     Authorization: `Bearer ${tokenString}`
@@ -79,7 +81,7 @@ function ManagerAdmin() {
 
         setLoading(true);
         try {
-            const response = await fetch(API_URL + API_UPDATE_ALL_STATUS, {
+            const response = await fetch(backendURL + API_UPDATE_ALL_STATUS, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ ids: Array.from(checkedItems)}),
@@ -115,7 +117,7 @@ function ManagerAdmin() {
     const handleDelete = async  (id) => {
         setLoading(true);
         try {
-            const response = await fetch(API_URL + API_UPDATE_ALL_STATUS, {
+            const response = await fetch(backendURL + API_UPDATE_ALL_STATUS, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ ids: Array.from( [id])}),

@@ -21,8 +21,8 @@ function SideMenu() {
   const menuItems = [
     {
       label: "Dashboard",
-      icon: <AppstoreOutlined />,
-      key: "/",
+      key: "/dashboard",
+      icon: <AppstoreOutlined />
     },
     {
       label: "Search",

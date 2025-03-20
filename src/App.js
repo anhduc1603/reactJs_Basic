@@ -13,29 +13,38 @@ import OAuthSuccess from "./Components/Login/OAuthSuccess";
 import ProtectedRoute from "./Components/Login/ProtectedRoute";
 
 function App() {
-  return (
-     <div className="App">
-         <AuthProvider>
-             <Routes>
-                 {/* Routes dùng chung Layout */}
-                 <Route path="/" element={<MainLayout />}>
-                     <Route path="/dashboard"  element={
-                         <ProtectedRoute>
-                             <Dashboard />
-                         </ProtectedRoute>
-                     } />
-                     <Route path="search" element={<Search />} />
-                     <Route path="history-request" element={<HistoryRequest />} />
-                     <Route path="register" element={<Register />} />
-                     <Route path="manager-admin" element={<ManagerAdmin />} />
-                     <Route path="oauth-success" element={<OAuthSuccess />} />
-                 </Route>
+    return (
+        <div className="App">
+            <AuthProvider>
+                <Routes>
+                    {/* Routes dùng chung Layout */}
+                    <Route path="/" element={<MainLayout/>}>
+                        <Route path="dashboard" element={
+                            <ProtectedRoute>
+                                <Dashboard/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="search" element={
+                            <ProtectedRoute>
+                                <Search/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="history-request" element={
+                            <ProtectedRoute>
+                                <HistoryRequest/>
+                            </ProtectedRoute>
+                        }/>
+                        <Route path="register" element={<Register/>}/>
+                        <Route path="manager-admin" element={<ManagerAdmin/>}/>
+                        <Route path="oauth-success" element={<OAuthSuccess/>}/>
+                    </Route>
 
-                 {/* Route riêng không dùng Layout */}
-                 <Route path="/login" element={<Login />} />
-             </Routes>
-         </AuthProvider>
-     </div>
-  );
+                    {/* Route riêng không dùng Layout */}
+                    <Route path="/login" element={<Login/>}/>
+                </Routes>
+            </AuthProvider>
+        </div>
+    );
 }
+
 export default App;
