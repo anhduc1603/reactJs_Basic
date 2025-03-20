@@ -3,10 +3,10 @@ import {getUserID, useAuth} from "./AuthContext";
 import {useNavigate} from "react-router-dom";
 import {Button, Card, Col, Container, Form, Row} from "react-bootstrap"; // Đổi từ antd sang bootstrap
 import 'bootstrap/dist/css/bootstrap.css';
-import {FaFacebook, FaGoogle} from "react-icons/fa";
+import {FaGoogle} from "react-icons/fa";
 import {API_SAVE_USER_LOGS, LOGIN_GOOGLE} from "../../constants";
 import {getPublicIP} from "../../Utils/getPublicIP";
-
+import FacebookLoginButton from "../../Button/FacebookLoginButton/FacebookLoginButton";
 
 
 const Login = () => {
@@ -16,6 +16,7 @@ const Login = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
     const backendURL = process.env.REACT_APP_API_URL_BACKEND;
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -81,11 +82,45 @@ const Login = () => {
         window.location.href = url
     };
 
-    const handleFacebookLogin = async (e) => {
-        e.preventDefault();
-        await login(username, password);
-        navigate("/");
+
+
+
+    const handleLoginSuccess = (response) => {
+        const accessToken = response.accessToken;
+        const userID = response.userID;
+        const email = response.email;
+        const name = response.name;
+        const picture = response.picture?.data?.url;
+        const expiry = response.expiresIn; // in seconds (số giây)
+        // Gửi token lên backend
+        fetch('http://localhost:8080/auth/facebook', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                accessToken,
+                userID,
+                email,
+                name,
+                picture,
+                expiry,
+            }),
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                console.log('Backend response:', data);
+                // Lưu JWT token hoặc session
+            })
+            .catch((err) => console.error(err));
     };
+
+    const handleLoginFailure = (response) => {
+        console.error('Failure:', response);
+    };
+
+
+
+
+
 
     return (
         <Container className="d-flex justify-content-center align-items-center vh-100">
@@ -126,13 +161,17 @@ const Login = () => {
                         </Button>
                     </Col>
                     <Col>
-                        <Button
-                            variant="outline-primary"
-                            className="w-100 d-flex align-items-center justify-content-center"
-                            onClick={handleFacebookLogin}
-                        >
-                            <FaFacebook className="me-2" /> Login with Facebook
-                        </Button>
+                        {/*<Button*/}
+                        {/*    variant="outline-primary"*/}
+                        {/*    className="w-100 d-flex align-items-center justify-content-center"*/}
+                        {/*    onClick={handleFacebookLogin}*/}
+                        {/*>*/}
+                        {/*    <FaFacebook className="me-2" /> Login with Facebook*/}
+                        {/*</Button>*/}
+                            <FacebookLoginButton
+                                onLoginSuccess={handleLoginSuccess}
+                                onLoginFailure={handleLoginFailure}
+                            />
                     </Col>
                 </Row>
                 <hr />

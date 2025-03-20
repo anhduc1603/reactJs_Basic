@@ -12,7 +12,11 @@ import ManagerAdmin from "./Pages/ManagerAdmin";
 import OAuthSuccess from "./Components/Login/OAuthSuccess";
 import ProtectedRoute from "./Components/Login/ProtectedRoute";
 
+
 function App() {
+
+
+
     return (
         <div className="App">
             <AuthProvider>
@@ -44,6 +48,9 @@ function App() {
                 </Routes>
             </AuthProvider>
         </div>
+
+
+        
     );
 }
 
