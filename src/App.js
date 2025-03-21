@@ -16,13 +16,16 @@ import ProtectedRoute from "./Components/Login/ProtectedRoute";
 function App() {
 
 
-
     return (
         <div className="App">
             <AuthProvider>
                 <Routes>
                     {/* Routes dùng chung Layout */}
-                    <Route path="/" element={<MainLayout/>}>
+                    <Route path="/" element={
+                        <ProtectedRoute>
+                            <MainLayout/>
+                        </ProtectedRoute>
+                    }>
                         <Route path="dashboard" element={
                             <ProtectedRoute>
                                 <Dashboard/>
@@ -40,17 +43,17 @@ function App() {
                         }/>
                         <Route path="register" element={<Register/>}/>
                         <Route path="manager-admin" element={<ManagerAdmin/>}/>
-                        <Route path="oauth-success" element={<OAuthSuccess/>}/>
+
                     </Route>
 
                     {/* Route riêng không dùng Layout */}
+                    <Route path="oauth-success" element={<OAuthSuccess/>}/>
                     <Route path="/login" element={<Login/>}/>
                 </Routes>
             </AuthProvider>
         </div>
 
 
-        
     );
 }
 

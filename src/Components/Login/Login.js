@@ -119,9 +119,6 @@ const Login = () => {
 
 
 
-
-
-
     return (
         <Container className="d-flex justify-content-center align-items-center vh-100">
             <Card style={{ width: "400px", padding: "20px" }}>
@@ -169,8 +166,8 @@ const Login = () => {
                         {/*    <FaFacebook className="me-2" /> Login with Facebook*/}
                         {/*</Button>*/}
                             <FacebookLoginButton
-                                onLoginSuccess={handleLoginSuccess}
-                                onLoginFailure={handleLoginFailure}
+                                // onLoginSuccess={handleLoginSuccess}
+                                // onLoginFailure={handleLoginFailure}
                             />
                     </Col>
                 </Row>
