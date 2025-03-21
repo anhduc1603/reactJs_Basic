@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {API_GET_ITEMS_BY_ADMIN, API_UPDATE_ALL_STATUS} from "../../constants";
+import {API_GET_ITEM_ADMIN_BY_SEARCH, API_GET_ITEMS_BY_ADMIN, API_UPDATE_ALL_STATUS} from "../../constants";
 import {
     Alert,
     Button,
@@ -49,7 +49,12 @@ function ManagerAdmin() {
         try {
             const tokenString = localStorage.getItem("token"); // Lấy token từ localStorage
             if (!tokenString) return null; // Nếu không có token, trả về null
-            const url = `${backendURL}${API_GET_ITEMS_BY_ADMIN}?page=${page}&limit=${limit}`;
+            // const url = `${backendURL}${API_GET_ITEMS_BY_ADMIN}?page=${page}&limit=${limit}`;
+
+            const url = query.trim()
+                ? `${backendURL}${API_GET_ITEM_ADMIN_BY_SEARCH}${encodeURIComponent(query)}`
+                : `${backendURL}${API_GET_ITEMS_BY_ADMIN}?page=${page}&limit=${limit}`;
+
             const response = await fetch(url,{
                 headers: {
                     Authorization: `Bearer ${tokenString}`
