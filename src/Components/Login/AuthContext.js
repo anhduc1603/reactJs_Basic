@@ -50,6 +50,7 @@ export function AuthProvider({children}) {
     const logout = () => {
         localStorage.removeItem("token");
         setUser(null);
+        unloadFacebookSDK();
     };
 
 
@@ -90,4 +91,25 @@ export const getUserID = () => {
         console.error("Invalid token", error);
         return null;
     }
+};
+
+const unloadFacebookSDK = () => {
+    // Xóa object FB global
+    if (window.FB) {
+        delete window.FB;
+    }
+
+    // Xóa script tag
+    const script = document.querySelector('script[src="https://connect.facebook.net/en_US/sdk.js"]');
+    if (script) {
+        script.remove();
+    }
+
+    // Xóa fb-root div nếu có
+    const fbRoot = document.getElementById('fb-root');
+    if (fbRoot) {
+        fbRoot.remove();
+    }
+
+    console.log('Facebook SDK unloaded!');
 };

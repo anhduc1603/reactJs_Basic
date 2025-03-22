@@ -32,7 +32,7 @@ const Login = () => {
                 }
                 const ipPublicUser = await getPublicIP();
                 const logData = {
-                    userid: userIDGetItems, // Giả sử backend trả về user_id
+                    userid: userIDGetItems,
                     ip_public: ipPublicUser,
                     user_agent: navigator.userAgent,
                     action :"login"
@@ -83,38 +83,12 @@ const Login = () => {
     };
 
 
-
-
-    const handleLoginSuccess = (response) => {
-        const accessToken = response.accessToken;
-        const userID = response.userID;
-        const email = response.email;
-        const name = response.name;
-        const picture = response.picture?.data?.url;
-        const expiry = response.expiresIn; // in seconds (số giây)
-        // Gửi token lên backend
-        fetch('http://localhost:8080/auth/facebook', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                accessToken,
-                userID,
-                email,
-                name,
-                picture,
-                expiry,
-            }),
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                console.log('Backend response:', data);
-                // Lưu JWT token hoặc session
-            })
-            .catch((err) => console.error(err));
+    const handleSuccess = (data) => {
+        console.log('Đăng nhập thành công:', data);
     };
 
-    const handleLoginFailure = (response) => {
-        console.error('Failure:', response);
+    const handleFailure = (err) => {
+        console.error('Đăng nhập thất bại:', err);
     };
 
 
@@ -151,24 +125,17 @@ const Login = () => {
                     <Col>
                         <Button
                             variant="outline-danger"
-                            className="w-100 d-flex align-items-center justify-content-center mb-2"
+                            className="w-100 d-flex align-items-center justify-content-center mb-2 py-2"
                             onClick={handleGoogleLogin}
+                            style={{ height: '45px', fontWeight: '500', fontSize: '16px' }}
                         >
-                            <FaGoogle className="me-2" /> Login with Google
+                            <FaGoogle className="me-2" size={20} /> Login with Google
                         </Button>
+
                     </Col>
                     <Col>
-                        {/*<Button*/}
-                        {/*    variant="outline-primary"*/}
-                        {/*    className="w-100 d-flex align-items-center justify-content-center"*/}
-                        {/*    onClick={handleFacebookLogin}*/}
-                        {/*>*/}
-                        {/*    <FaFacebook className="me-2" /> Login with Facebook*/}
-                        {/*</Button>*/}
-                            <FacebookLoginButton
-                                // onLoginSuccess={handleLoginSuccess}
-                                // onLoginFailure={handleLoginFailure}
-                            />
+                        <FacebookLoginButton onLoginSuccess={handleSuccess} onLoginFailure={handleFailure} />
+
                     </Col>
                 </Row>
                 <hr />

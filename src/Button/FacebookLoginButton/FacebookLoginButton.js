@@ -1,73 +1,64 @@
 // src/components/FacebookLoginButton.js
 import React from 'react';
-import FacebookLogin from 'react-facebook-login';
+import {Button} from 'react-bootstrap';
+import FacebookLogin from "@greatsumini/react-facebook-login";
+import {FaFacebook} from "react-icons/fa";
+import {LOGIN_FACEBOOK} from "../../constants";
 
 const FacebookLoginButton = ({ onLoginSuccess, onLoginFailure }) => {
+    const appIdFb = process.env.REACT_APP_FACEBOOK_APP_ID;
+    const backendURL = process.env.REACT_APP_API_URL_BACKEND;
 
-    const responseFacebook = (response) => {
-        if (response.accessToken) {
-            console.log('Facebook login success:', response);
+    const handleSuccess = (response) => {
+        console.log('Facebook login success:', response);
+        const urlLoginFb = backendURL + LOGIN_FACEBOOK
+        // Gửi accessToken tới backend
+        fetch(urlLoginFb, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                accessToken: response.accessToken,
+            }),
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                console.log('Phản hồi từ backend:', data);
 
-            // Extract info
-            const accessToken = response.accessToken;
-            const userID = response.userID;
-            const email = response.email;
-            const name = response.name;
-            const picture = response.picture?.data?.url;
-            const expiry = response.expiresIn;
+                if (onLoginSuccess) onLoginSuccess(data);
 
-            // Call Backend API
-            fetch('http://localhost:8080/auth/facebook', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    accessToken,
-                    userID,
-                    email,
-                    name,
-                    picture,
-                    expiry,
-                }),
-            })
-                .then((res) => res.json())
-                .then((data) => {
-                    console.log('Backend response:', data);
-                    // Save token, session, etc. tùy bạn muốn
-                    localStorage.setItem('jwt_token', data.token);
-
-                    // Gọi callback cho cha (nếu cần)
-                    if (onLoginSuccess) {
-                        onLoginSuccess(data);
-                    }
-
-                    // Redirect (tuỳ bạn muốn ở đây hay để ở component cha)
+                // Chuyển hướng
+                if (data.redirectURL) {
+                    window.location.href = data.redirectURL;
+                } else {
                     window.location.href = '/dashboard';
-                })
-                .catch((err) => {
-                    console.error(err);
-                    if (onLoginFailure) {
-                        onLoginFailure(err);
-                    }
-                });
+                }
+            })
+            .catch((err) => {
+                console.error(err);
+                if (onLoginFailure) onLoginFailure(err);
+            });
+    };
 
-        } else {
-            console.log('Facebook login failed:', response);
-            if (onLoginFailure) {
-                onLoginFailure(response);
-            }
-        }
+    const handleError = (error) => {
+        console.log('Facebook login failed:', error);
+        if (onLoginFailure) onLoginFailure(error);
     };
 
     return (
         <FacebookLogin
-            appId="1071301685024195"
-            autoLoad={false}
-            fields="name,email,picture"
-            callback={responseFacebook}
-            scope="email,public_profile"
-            cookie={true}
-            returnScopes={true}
-            authType="rerequest"
+            appId={appIdFb}
+            onSuccess={handleSuccess}
+            onFail={handleError}
+            render={({ onClick }) => (
+                <Button
+                    variant="primary"
+                    className="w-100 d-flex align-items-center justify-content-center mb-2 py-2"
+                    onClick={onClick}
+                    style={{ height: '45px', fontWeight: '500', fontSize: '16px' }}
+                >
+                    <FaFacebook className="me-2" size={20} /> Login with Facebook
+                </Button>
+            )}
         />
     );
 };

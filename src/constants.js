@@ -17,5 +17,7 @@ export const API_GET_ITEMS_BY_ADMIN = "/admin/items"
 //Login with google
 export const LOGIN_GOOGLE ="/auth/login"
 
+//Login with facebook
+export const LOGIN_FACEBOOK ="/auth/facebook"
 
 export const STATUS_SUCCESS = 1;
